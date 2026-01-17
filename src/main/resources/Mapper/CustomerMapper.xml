@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.stock.bookinventory.mapper.CustomerMapper">
+
+    <!-- Result Map -->
+    <resultMap id="CustomerResultMap" type="com.stock.bookinventory.model.Customer">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- Insert Customer -->
+    <insert id="insert" parameterType="com.stock.bookinventory.model.Customer" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO customer (name, email, phone, address, created_at, updated_at)
+        VALUES (#{name}, #{email}, #{phone}, #{address}, NOW(), NOW())
+    </insert>
+
+    <!-- Find All Customers -->
+    <select id="findAll" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        ORDER BY id DESC
+    </select>
+
+    <!-- Find Customer By ID -->
+    <select id="findById" parameterType="long" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        WHERE id = #{id}
+    </select>
+
+    <!-- Select Customer By ID -->
+    <select id="selectById" parameterType="long" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        WHERE id = #{id}
+    </select>
+
+    <!-- Get Customer For Update (with row lock) -->
+    <select id="getCustomerForUpdate" parameterType="long" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        WHERE id = #{id}
+        FOR UPDATE
+    </select>
+
+    <!-- Update Customer -->
+    <update id="update" parameterType="com.stock.bookinventory.model.Customer">
+        UPDATE customer
+        SET name = #{name},
+            email = #{email},
+            phone = #{phone},
+            address = #{address},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <!-- Delete Customer By ID -->
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM customer
+        WHERE id = #{id}
+    </delete>
+
+    <!-- Find Customers By Keyword (searches in name, email, phone) -->
+    <select id="findByKeyword" parameterType="string" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        WHERE name LIKE CONCAT('%', #{keyword}, '%')
+           OR email LIKE CONCAT('%', #{keyword}, '%')
+           OR phone LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY id DESC
+    </select>
+
+    <!-- Find Customers By Criteria (dynamic SQL) -->
+    <select id="findByCriteria" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="email != null and email != ''">
+                AND email LIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="phone != null and phone != ''">
+                AND phone LIKE CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="address != null and address != ''">
+                AND address LIKE CONCAT('%', #{address}, '%')
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <!-- Find Customer By Email -->
+    <select id="findByEmail" parameterType="string" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        WHERE email = #{email}
+    </select>
+
+    <!-- Find Customer By Phone -->
+    <select id="findByPhone" parameterType="string" resultMap="CustomerResultMap">
+        SELECT id, name, email, phone, address, created_at, updated_at
+        FROM customer
+        WHERE phone = #{phone}
+    </select>
+
+    <!-- Count Total Customers -->
+    <select id="countTotal" resultType="long">
+        SELECT COUNT(*)
+        FROM customer
+    </select>
+
+    <!-- Check If Email Exists -->
+    <select id="existsByEmail" parameterType="string" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM customer
+        WHERE email = #{email}
+    </select>
+
+    <!-- Check If Phone Exists -->
+    <select id="existsByPhone" parameterType="string" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM customer
+        WHERE phone = #{phone}
+    </select>
+
+</mapper>
