@@ -26,6 +26,9 @@
         SELECT id, name, email, phone, address, created_at, updated_at
         FROM customer
         ORDER BY id DESC
+        <if test="pageSize != null and offset != null">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
     </select>
 
     <!-- Find Customer By ID -->
@@ -54,10 +57,10 @@
     <update id="update" parameterType="com.stock.bookinventory.model.Customer">
         UPDATE customer
         SET name = #{name},
-            email = #{email},
-            phone = #{phone},
-            address = #{address},
-            updated_at = NOW()
+        email = #{email},
+        phone = #{phone},
+        address = #{address},
+        updated_at = NOW()
         WHERE id = #{id}
     </update>
 
@@ -72,31 +75,14 @@
         SELECT id, name, email, phone, address, created_at, updated_at
         FROM customer
         WHERE name LIKE CONCAT('%', #{keyword}, '%')
-           OR email LIKE CONCAT('%', #{keyword}, '%')
-           OR phone LIKE CONCAT('%', #{keyword}, '%')
+        OR email LIKE CONCAT('%', #{keyword}, '%')
+        OR phone LIKE CONCAT('%', #{keyword}, '%')
         ORDER BY id DESC
+        <if test="pageSize != null and offset != null">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
     </select>
 
-    <!-- Find Customers By Criteria (dynamic SQL) -->
-    <select id="findByCriteria" resultMap="CustomerResultMap">
-        SELECT id, name, email, phone, address, created_at, updated_at
-        FROM customer
-        <where>
-            <if test="name != null and name != ''">
-                AND name LIKE CONCAT('%', #{name}, '%')
-            </if>
-            <if test="email != null and email != ''">
-                AND email LIKE CONCAT('%', #{email}, '%')
-            </if>
-            <if test="phone != null and phone != ''">
-                AND phone LIKE CONCAT('%', #{phone}, '%')
-            </if>
-            <if test="address != null and address != ''">
-                AND address LIKE CONCAT('%', #{address}, '%')
-            </if>
-        </where>
-        ORDER BY id DESC
-    </select>
 
     <!-- Find Customer By Email -->
     <select id="findByEmail" parameterType="string" resultMap="CustomerResultMap">

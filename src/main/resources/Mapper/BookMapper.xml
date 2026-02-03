@@ -28,6 +28,9 @@
         SELECT id, title, author, genre, publication_date, price, stock_quantity, created_at, updated_at
         FROM book
         ORDER BY id DESC
+        <if test="pageSize != null and offset != null">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
     </select>
 
     <!-- Find Book By ID -->
@@ -45,7 +48,7 @@
     </select>
 
     <!-- Get Book For Update (with row lock) -->
-    <select id="getBookForUpdate" parameterType="long" resultMap="BookResultMap">
+    <select id="selectBookForUpdate" parameterType="long" resultMap="BookResultMap">
         SELECT id, title, author, genre, publication_date, price, stock_quantity, created_at, updated_at
         FROM book
         WHERE id = #{id}
@@ -56,12 +59,12 @@
     <update id="update" parameterType="com.stock.bookinventory.model.Book">
         UPDATE book
         SET title = #{title},
-            author = #{author},
-            genre = #{genre},
-            publication_date = #{publicationDate},
-            price = #{price},
-            stock_quantity = #{stockQuantity},
-            updated_at = NOW()
+        author = #{author},
+        genre = #{genre},
+        publication_date = #{publicationDate},
+        price = #{price},
+        stock_quantity = #{stockQuantity},
+        updated_at = NOW()
         WHERE id = #{id}
     </update>
 
@@ -76,9 +79,12 @@
         SELECT id, title, author, genre, publication_date, price, stock_quantity, created_at, updated_at
         FROM book
         WHERE title LIKE CONCAT('%', #{keyword}, '%')
-           OR author LIKE CONCAT('%', #{keyword}, '%')
-           OR genre LIKE CONCAT('%', #{keyword}, '%')
+        OR author LIKE CONCAT('%', #{keyword}, '%')
+        OR genre LIKE CONCAT('%', #{keyword}, '%')
         ORDER BY id DESC
+        <if test="pageSize != null and offset != null">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
     </select>
 
     <!-- Find Books By Criteria (dynamic SQL) -->
@@ -86,45 +92,48 @@
         SELECT id, title, author, genre, publication_date, price, stock_quantity, created_at, updated_at
         FROM book
         <where>
-            <if test="title != null and title != ''">
-                AND title LIKE CONCAT('%', #{title}, '%')
+            <if test="criteria.title != null and criteria.title != ''">
+                AND title LIKE CONCAT('%', #{criteria.title}, '%')
             </if>
-            <if test="author != null and author != ''">
-                AND author LIKE CONCAT('%', #{author}, '%')
+            <if test="criteria.author != null and criteria.author != ''">
+                AND author LIKE CONCAT('%', #{criteria.author}, '%')
             </if>
-            <if test="genre != null and genre != ''">
-                AND genre LIKE CONCAT('%', #{genre}, '%')
+            <if test="criteria.genre != null and criteria.genre != ''">
+                AND genre LIKE CONCAT('%', #{criteria.genre}, '%')
             </if>
-            <if test="minPrice != null">
-                AND price &gt;= #{minPrice}
+            <if test="criteria.minPrice != null">
+                AND price &gt;= #{criteria.minPrice}
             </if>
-            <if test="maxPrice != null">
-                AND price &lt;= #{maxPrice}
+            <if test="criteria.maxPrice != null">
+                AND price &lt;= #{criteria.maxPrice}
             </if>
-            <if test="minStock != null">
-                AND stock_quantity &gt;= #{minStock}
+            <if test="criteria.startDate != null">
+                AND publication_date &gt;= #{criteria.startDate}
             </if>
-            <if test="maxStock != null">
-                AND stock_quantity &lt;= #{maxStock}
+            <if test="criteria.endDate != null">
+                AND publication_date &lt;= #{criteria.endDate}
             </if>
         </where>
         ORDER BY id DESC
+        <if test="pageSize != null and offset != null">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
     </select>
 
     <!-- Deduct Stock -->
     <update id="deductStock">
         UPDATE book
         SET stock_quantity = stock_quantity - #{quantity},
-            updated_at = NOW()
+        updated_at = NOW()
         WHERE id = #{bookId}
-          AND stock_quantity &gt;= #{quantity}
+        AND stock_quantity &gt;= #{quantity}
     </update>
 
     <!-- Add Stock -->
     <update id="addStock">
         UPDATE book
         SET stock_quantity = stock_quantity + #{quantity},
-            updated_at = NOW()
+        updated_at = NOW()
         WHERE id = #{bookId}
     </update>
 
@@ -133,7 +142,7 @@
         SELECT COUNT(*) > 0
         FROM book
         WHERE id = #{bookId}
-          AND stock_quantity &gt;= #{quantity}
+        AND stock_quantity &gt;= #{quantity}
     </select>
 
     <!-- Get Current Stock -->
@@ -149,28 +158,6 @@
         FROM book
         WHERE stock_quantity &lt;= #{threshold}
         ORDER BY stock_quantity ASC, id DESC
-    </select>
-
-    <!-- Count Total Books -->
-    <select id="countTotal" resultType="long">
-        SELECT COUNT(*)
-        FROM book
-    </select>
-
-    <!-- Find Books By Genre -->
-    <select id="findByGenre" parameterType="string" resultMap="BookResultMap">
-        SELECT id, title, author, genre, publication_date, price, stock_quantity, created_at, updated_at
-        FROM book
-        WHERE genre = #{genre}
-        ORDER BY id DESC
-    </select>
-
-    <!-- Find Books By Author -->
-    <select id="findByAuthor" parameterType="string" resultMap="BookResultMap">
-        SELECT id, title, author, genre, publication_date, price, stock_quantity, created_at, updated_at
-        FROM book
-        WHERE author LIKE CONCAT('%', #{author}, '%')
-        ORDER BY id DESC
     </select>
 
 </mapper>

@@ -1,57 +1,47 @@
 package com.stock.bookinventory.mapper;
 
-import com.stock.bookinventory.model.Book;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.math.BigDecimal;
-import java.util.List;
+import com.stock.bookinventory.dto.request.BookRequestByCriteriaDTO;
+import com.stock.bookinventory.model.Book;
 
 @Mapper
 public interface BookMapper {
 
-    // Insert
-    int insert(Book book);
+	// Insert
+	int insert(Book book);
 
-    // Find operations
-    List<Book> findAll();
+	// Find operations
+	List<Book> findAll(Integer pageSize, Integer offset);
 
-    Book findById(@Param("id") Long id);
+	<Optional> Book findById(@Param("id") Long id);
 
-    Book selectById(@Param("id") Long id);
+	Book selectById(@Param("id") Long id);
 
-    Book getBookForUpdate(@Param("id") Long id);
+	Book selectBookForUpdate(@Param("id") Long id);
 
-    List<Book> findByKeyword(@Param("keyword") String keyword);
+	List<Book> findByKeyword(@Param("keyword") String keyword, Integer pageSize, Integer offset);
 
-    List<Book> findByCriteria(@Param("title") String title,
-                               @Param("author") String author,
-                               @Param("genre") String genre,
-                               @Param("minPrice") BigDecimal minPrice,
-                               @Param("maxPrice") BigDecimal maxPrice,
-                               @Param("minStock") Integer minStock,
-                               @Param("maxStock") Integer maxStock);
+	List<Book> findByCriteria(BookRequestByCriteriaDTO criteria, Integer pageSize, Integer offset);
 
-    List<Book> findByGenre(@Param("genre") String genre);
+	List<Book> findLowStockBooks(@Param("threshold") Integer threshold);
 
-    List<Book> findByAuthor(@Param("author") String author);
+	// Update operations
+	int update(Book book);
 
-    List<Book> findLowStockBooks(@Param("threshold") Integer threshold);
+	int deductStock(@Param("bookId") Long bookId, @Param("quantity") Integer quantity);
 
-    // Update operations
-    int update(Book book);
+	int addStock(@Param("bookId") Long bookId, @Param("quantity") Integer quantity);
 
-    int deductStock(@Param("bookId") Long bookId, @Param("quantity") Integer quantity);
+	// Delete operations
+	int deleteById(@Param("id") Long id);
 
-    int addStock(@Param("bookId") Long bookId, @Param("quantity") Integer quantity);
+	// Utility operations
+	boolean checkStockAvailability(@Param("bookId") Long bookId, @Param("quantity") Integer quantity);
 
-    // Delete operations
-    int deleteById(@Param("id") Long id);
+	Integer getCurrentStock(@Param("bookId") Long bookId);
 
-    // Utility operations
-    boolean checkStockAvailability(@Param("bookId") Long bookId, @Param("quantity") Integer quantity);
-
-    Integer getCurrentStock(@Param("bookId") Long bookId);
-
-    Long countTotal();
 }

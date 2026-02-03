@@ -10,6 +10,7 @@
         <result property="orderId" column="order_id" jdbcType="BIGINT"/>
         <result property="bookId" column="book_id" jdbcType="BIGINT"/>
         <result property="quantity" column="quantity" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="DECIMAL"/>
         <result property="subtotal" column="subtotal" jdbcType="DECIMAL"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
@@ -17,44 +18,49 @@
     </resultMap>
 
     <!-- Insert Order Item -->
-    <insert id="insert" parameterType="com.stock.bookinventory.model.OrderItem" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO order_item (order_id, book_id, quantity, subtotal, status, created_at, updated_at)
-        VALUES (#{orderId}, #{bookId}, #{quantity}, #{subtotal}, #{status}, NOW(), NOW())
+    <insert id="insert" parameterType="com.stock.bookinventory.model.OrderItem" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO order_item (order_id, book_id, quantity, price, subtotal, status, created_at, updated_at)
+        VALUES (#{orderId}, #{bookId}, #{quantity}, #{price}, #{subtotal}, #{status}, NOW(), NOW())
     </insert>
 
     <!-- Batch Insert Order Items -->
     <insert id="batchInsert" parameterType="java.util.List">
-        INSERT INTO order_item (order_id, book_id, quantity, subtotal, status, created_at, updated_at)
+        INSERT INTO order_item (order_id, book_id, quantity, price, subtotal, status, created_at, updated_at)
         VALUES
         <foreach collection="list" item="item" separator=",">
-            (#{item.orderId}, #{item.bookId}, #{item.quantity}, #{item.subtotal}, #{item.status}, NOW(), NOW())
+            (#{item.orderId}, #{item.bookId}, #{item.quantity}, #{item.price}, #{item.subtotal}, #{item.status}, NOW(),
+            NOW())
         </foreach>
     </insert>
 
     <!-- Find All Order Items -->
     <select id="findAll" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
         FROM order_item
         ORDER BY id DESC
+        <if test="pageSize != null and offset != null">
+            LIMIT #{pageSize} OFFSET #{offset}
+        </if>
     </select>
 
     <!-- Find Order Item By ID -->
     <select id="findById" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE id = #{id}
     </select>
 
     <!-- Select Order Item By ID -->
     <select id="selectById" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE id = #{id}
     </select>
 
     <!-- Get Order Item For Update (with row lock) -->
     <select id="getOrderItemForUpdate" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE id = #{id}
         FOR UPDATE
@@ -64,11 +70,12 @@
     <update id="update" parameterType="com.stock.bookinventory.model.OrderItem">
         UPDATE order_item
         SET order_id = #{orderId},
-            book_id = #{bookId},
-            quantity = #{quantity},
-            subtotal = #{subtotal},
-            status = #{status},
-            updated_at = NOW()
+        book_id = #{bookId},
+        quantity = #{quantity},
+        price = #{price},
+        subtotal = #{subtotal},
+        status = #{status},
+        updated_at = NOW()
         WHERE id = #{id}
     </update>
 
@@ -76,7 +83,7 @@
     <update id="updateStatus">
         UPDATE order_item
         SET status = #{status},
-            updated_at = NOW()
+        updated_at = NOW()
         WHERE id = #{orderItemId}
     </update>
 
@@ -84,8 +91,8 @@
     <update id="updateQuantity">
         UPDATE order_item
         SET quantity = #{quantity},
-            subtotal = #{subtotal},
-            updated_at = NOW()
+        subtotal = #{subtotal},
+        updated_at = NOW()
         WHERE id = #{orderItemId}
     </update>
 
@@ -103,7 +110,7 @@
 
     <!-- Find Order Items By Order ID -->
     <select id="findByOrderId" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE order_id = #{orderId}
         ORDER BY id ASC
@@ -111,7 +118,7 @@
 
     <!-- Find Order Items By Book ID -->
     <select id="findByBookId" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE book_id = #{bookId}
         ORDER BY id DESC
@@ -119,67 +126,10 @@
 
     <!-- Find Order Items By Status -->
     <select id="findByStatus" parameterType="string" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE status = #{status}
         ORDER BY id DESC
-    </select>
-
-    <!-- Find Order Items By Criteria (dynamic SQL) -->
-    <select id="findByCriteria" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
-        FROM order_item
-        <where>
-            <if test="orderId != null">
-                AND order_id = #{orderId}
-            </if>
-            <if test="bookId != null">
-                AND book_id = #{bookId}
-            </if>
-            <if test="status != null and status != ''">
-                AND status = #{status}
-            </if>
-            <if test="minQuantity != null">
-                AND quantity &gt;= #{minQuantity}
-            </if>
-            <if test="maxQuantity != null">
-                AND quantity &lt;= #{maxQuantity}
-            </if>
-            <if test="minSubtotal != null">
-                AND subtotal &gt;= #{minSubtotal}
-            </if>
-            <if test="maxSubtotal != null">
-                AND subtotal &lt;= #{maxSubtotal}
-            </if>
-        </where>
-        ORDER BY id DESC
-    </select>
-
-    <!-- Count Total Order Items -->
-    <select id="countTotal" resultType="long">
-        SELECT COUNT(*)
-        FROM order_item
-    </select>
-
-    <!-- Count Order Items By Order ID -->
-    <select id="countByOrderId" parameterType="long" resultType="long">
-        SELECT COUNT(*)
-        FROM order_item
-        WHERE order_id = #{orderId}
-    </select>
-
-    <!-- Count Order Items By Book ID -->
-    <select id="countByBookId" parameterType="long" resultType="long">
-        SELECT COUNT(*)
-        FROM order_item
-        WHERE book_id = #{bookId}
-    </select>
-
-    <!-- Count Order Items By Status -->
-    <select id="countByStatus" parameterType="string" resultType="long">
-        SELECT COUNT(*)
-        FROM order_item
-        WHERE status = #{status}
     </select>
 
     <!-- Calculate Total By Order ID -->
@@ -196,20 +146,12 @@
         WHERE order_id = #{orderId}
     </select>
 
-    <!-- Find Order Item By Order ID And Book ID -->
-    <select id="findByOrderIdAndBookId" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
-        FROM order_item
-        WHERE order_id = #{orderId}
-          AND book_id = #{bookId}
-    </select>
-
     <!-- Check If Order Item Exists -->
     <select id="existsByOrderIdAndBookId" resultType="boolean">
         SELECT COUNT(*) > 0
         FROM order_item
         WHERE order_id = #{orderId}
-          AND book_id = #{bookId}
+        AND book_id = #{bookId}
     </select>
 
 </mapper>
