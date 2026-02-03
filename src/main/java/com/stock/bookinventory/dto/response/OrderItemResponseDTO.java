@@ -14,6 +14,7 @@ public class OrderItemResponseDTO {
 	private Long bookId;
 	private String bookTitle;
 	private Integer quantity;
+	private BigDecimal price;
 	private BigDecimal subtotal;
 	private OrderItemStatus status;
 	private Date createdAt;

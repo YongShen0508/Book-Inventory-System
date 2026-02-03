@@ -10,9 +10,10 @@ public class BookResponseDTO {
 	private Long id;
 	private String title;
 	private String author;
-	private String isbn;
+	private String genre;
 	private BigDecimal price;
 	private Integer stockQuantity;
+	private Date publishedDate;
 	private Date createdAt;
 	private Date updatedAt;
 
