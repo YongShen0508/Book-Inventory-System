@@ -2,10 +2,13 @@ package com.stock.bookinventory.controller;
 
 import java.util.List;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.stock.bookinventory.constants.AppConstants;
+import com.stock.bookinventory.dto.request.CreateValidation;
 import com.stock.bookinventory.dto.request.CustomerRequestDTO;
+import com.stock.bookinventory.dto.request.UpdateValidation;
 import com.stock.bookinventory.dto.response.ApiResponse;
 import com.stock.bookinventory.dto.response.CustomerResponseDTO;
 import com.stock.bookinventory.service.CustomerService;
@@ -21,7 +24,8 @@ public class CustomerController {
 	}
 
 	@PostMapping("/createCustomer")
-	public ApiResponse<CustomerResponseDTO> createCustomer(CustomerRequestDTO customerRequestDTO) {
+	public ApiResponse<CustomerResponseDTO> createCustomer(
+			@Validated(CreateValidation.class) @RequestBody CustomerRequestDTO customerRequestDTO) {
 		CustomerResponseDTO createdCustomer = customerService.createCustomer(customerRequestDTO);
 		return ApiResponse.success("Customer created successfully", createdCustomer);
 	}
@@ -33,7 +37,8 @@ public class CustomerController {
 	}
 
 	@PutMapping
-	public ApiResponse<Void> updateCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
+	public ApiResponse<Void> updateCustomer(
+			@Validated(UpdateValidation.class) @RequestBody CustomerRequestDTO customerRequestDTO) {
 		customerService.updateCustomer(customerRequestDTO);
 		return ApiResponse.success("Customer updated successfully");
 	}
@@ -46,13 +51,13 @@ public class CustomerController {
 		return ApiResponse.success("Customers retrieved successfully", customers);
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/id/{id}")
 	public ApiResponse<CustomerResponseDTO> getCustomerById(@PathVariable Long id) {
 		CustomerResponseDTO customer = customerService.getCustomerById(id);
 		return ApiResponse.success("Customer retrieved successfully", customer);
 	}
 
-	@GetMapping("/{email}")
+	@GetMapping("/email/{email}")
 	public ApiResponse<CustomerResponseDTO> getCustomerByEmail(@PathVariable String email) {
 		CustomerResponseDTO customer = customerService.getCustomerByEmail(email);
 		return ApiResponse.success("Customer retrieved successfully", customer);

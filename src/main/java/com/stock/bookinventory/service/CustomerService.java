@@ -56,9 +56,16 @@ public class CustomerService {
 
 	@Transactional
 	public CustomerResponseDTO createCustomer(CustomerRequestDTO customerRequestDTO) {
+		// Check if email already exists
+		Customer existingCustomer = customerRepository.findByEmail(customerRequestDTO.getEmail());
+		if (existingCustomer != null) {
+			throw new GeneralException(ErrorCode.DUPLICATE_EMAIL,
+					"Customer with email '" + customerRequestDTO.getEmail() + "' already exists.");
+		}
+
 		Customer customer = CustomerConverter.toModel(customerRequestDTO);
 		customerRepository.insert(customer);
-		return CustomerConverter.toDTO(customer);
+		return CustomerConverter.toDTO(customerRepository.selectById(customer.getId()));
 	}
 
 	@Transactional
@@ -67,6 +74,13 @@ public class CustomerService {
 		if (existingCustomer == null) {
 			throw new GeneralException(ErrorCode.RECORD_NOT_FOUND,
 					"Customer with ID " + customerRequestDTO.getId() + " does not exist.");
+		}
+
+		// Check if the new email already exists (and belongs to a different customer)
+		Customer customerWithEmail = customerRepository.findByEmail(customerRequestDTO.getEmail());
+		if (customerWithEmail != null && !customerWithEmail.getId().equals(customerRequestDTO.getId())) {
+			throw new GeneralException(ErrorCode.DUPLICATE_EMAIL,
+					"Email '" + customerRequestDTO.getEmail() + "' is already in use by another customer.");
 		}
 
 		Customer customer = CustomerConverter.toModel(customerRequestDTO);
