@@ -1,12 +1,14 @@
 SET foreign_key_checks = 0;
 
+DROP TABLE IF EXISTS order_item;
+DROP TABLE IF EXISTS `order`;
 DROP TABLE IF EXISTS book;
 DROP TABLE IF EXISTS customer;
-DROP TABLE IF EXISTS `order`;
-DROP TABLE IF EXISTS order_item;
 
 SET foreign_key_checks = 1;
 
+
+-- ================= CUSTOMER =================
 CREATE TABLE IF NOT EXISTS customer (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -19,6 +21,8 @@ CREATE TABLE IF NOT EXISTS customer (
     INDEX idx_email (email)
 );
 
+
+-- ================= BOOK =================
 CREATE TABLE book (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
@@ -38,6 +42,7 @@ CREATE TABLE book (
 );
 
 
+-- ================= ORDER =================
 CREATE TABLE IF NOT EXISTS `order` (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     customer_id BIGINT NOT NULL,
@@ -50,18 +55,19 @@ CREATE TABLE IF NOT EXISTS `order` (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
     INDEX idx_status (status),
-    INDEX idx_customer_id(customer_id),
+    INDEX idx_customer_id (customer_id),
     INDEX idx_expires_at (expires_at)
 );
 
+
+-- ================= ORDER ITEM =================
 CREATE TABLE IF NOT EXISTS order_item (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_id BIGINT NOT NULL,
     book_id BIGINT NOT NULL,
     quantity INT NOT NULL,
-    price DECIMAL(10, 2) NOT NULL,
     subtotal DECIMAL(10, 2) NOT NULL,
-    status ENUM('PENDING','SHIPPED','DELIVERED','COMPLETED', 'CANCELLED', 'RETURNED') NOT NULL,
+    status ENUM('PENDING','SHIPPED','DELIVERED','COMPLETED','CANCELLED','RETURNED') NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

@@ -61,41 +61,40 @@ INSERT INTO `order` (customer_id, order_date, status, total_amount, order_at, ex
 (1, '2026-01-17 15:50:00', 'PENDING', 44.97, '2026-01-17 15:50:00', '2026-01-24 15:50:00'),
 (9, '2026-01-17 17:10:00', 'CONFIRMED', 62.96, '2026-01-17 17:10:00', '2026-01-24 17:10:00');
 
--- Insert Order Items
 INSERT INTO order_item (order_id, book_id, quantity, subtotal, status) VALUES
--- Order 1 (Customer 1)
 (1, 1, 2, 21.98, 'DELIVERED'),
 (1, 3, 2, 17.98, 'DELIVERED'),
--- Order 2 (Customer 2)
+
 (2, 8, 3, 44.97, 'DELIVERED'),
 (2, 5, 1, 9.99, 'DELIVERED'),
--- Order 3 (Customer 3)
+
 (3, 9, 2, 39.98, 'SHIPPED'),
 (3, 6, 1, 12.99, 'SHIPPED'),
 (3, 15, 3, 34.47, 'SHIPPED'),
--- Order 4 (Customer 4)
+
 (4, 21, 2, 20.98, 'SHIPPED'),
 (4, 22, 3, 23.97, 'SHIPPED'),
--- Order 5 (Customer 5)
+
 (5, 4, 2, 13.98, 'PENDING'),
 (5, 2, 1, 7.99, 'PENDING'),
 (5, 7, 1, 11.99, 'PENDING'),
--- Order 6 (Customer 6)
+
 (6, 12, 2, 31.98, 'COMPLETED'),
 (6, 17, 1, 16.99, 'COMPLETED'),
 (6, 23, 2, 23.98, 'COMPLETED'),
--- Order 7 (Customer 7)
+
 (7, 10, 2, 14.98, 'DELIVERED'),
 (7, 11, 1, 9.49, 'DELIVERED'),
--- Order 8 (Customer 8)
+
 (8, 19, 3, 29.97, 'SHIPPED'),
 (8, 20, 4, 35.96, 'SHIPPED'),
 (8, 24, 2, 25.98, 'SHIPPED'),
--- Order 9 (Customer 1 - repeat customer)
+
 (9, 14, 3, 26.97, 'PENDING'),
 (9, 16, 1, 13.99, 'PENDING'),
--- Order 10 (Customer 9)
+
 (10, 25, 2, 28.98, 'COMPLETED'),
 (10, 18, 1, 12.49, 'COMPLETED'),
 (10, 13, 2, 16.98, 'COMPLETED');
+
 
