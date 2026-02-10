@@ -10,7 +10,6 @@
         <result property="orderId" column="order_id" jdbcType="BIGINT"/>
         <result property="bookId" column="book_id" jdbcType="BIGINT"/>
         <result property="quantity" column="quantity" jdbcType="INTEGER"/>
-        <result property="price" column="price" jdbcType="DECIMAL"/>
         <result property="subtotal" column="subtotal" jdbcType="DECIMAL"/>
         <result property="status" column="status" jdbcType="VARCHAR"/>
         <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
@@ -20,23 +19,22 @@
     <!-- Insert Order Item -->
     <insert id="insert" parameterType="com.stock.bookinventory.model.OrderItem" useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO order_item (order_id, book_id, quantity, price, subtotal, status, created_at, updated_at)
-        VALUES (#{orderId}, #{bookId}, #{quantity}, #{price}, #{subtotal}, #{status}, NOW(), NOW())
+        INSERT INTO order_item (order_id, book_id, quantity, subtotal, status, created_at, updated_at)
+        VALUES (#{orderId}, #{bookId}, #{quantity}, #{subtotal}, #{status}, NOW(), NOW())
     </insert>
 
     <!-- Batch Insert Order Items -->
     <insert id="batchInsert" parameterType="java.util.List">
-        INSERT INTO order_item (order_id, book_id, quantity, price, subtotal, status, created_at, updated_at)
+        INSERT INTO order_item (order_id, book_id, quantity, subtotal, status, created_at, updated_at)
         VALUES
         <foreach collection="list" item="item" separator=",">
-            (#{item.orderId}, #{item.bookId}, #{item.quantity}, #{item.price}, #{item.subtotal}, #{item.status}, NOW(),
-            NOW())
+            (#{item.orderId}, #{item.bookId}, #{item.quantity}, #{item.subtotal}, #{item.status}, NOW(), NOW())
         </foreach>
     </insert>
 
     <!-- Find All Order Items -->
     <select id="findAll" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
         FROM order_item
         ORDER BY id DESC
         <if test="pageSize != null and offset != null">
@@ -46,21 +44,21 @@
 
     <!-- Find Order Item By ID -->
     <select id="findById" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE id = #{id}
     </select>
 
     <!-- Select Order Item By ID -->
     <select id="selectById" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE id = #{id}
     </select>
 
     <!-- Get Order Item For Update (with row lock) -->
     <select id="getOrderItemForUpdate" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE id = #{id}
         FOR UPDATE
@@ -72,7 +70,6 @@
         SET order_id = #{orderId},
         book_id = #{bookId},
         quantity = #{quantity},
-        price = #{price},
         subtotal = #{subtotal},
         status = #{status},
         updated_at = NOW()
@@ -110,7 +107,7 @@
 
     <!-- Find Order Items By Order ID -->
     <select id="findByOrderId" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE order_id = #{orderId}
         ORDER BY id ASC
@@ -118,7 +115,7 @@
 
     <!-- Find Order Items By Book ID -->
     <select id="findByBookId" parameterType="long" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE book_id = #{bookId}
         ORDER BY id DESC
@@ -126,7 +123,7 @@
 
     <!-- Find Order Items By Status -->
     <select id="findByStatus" parameterType="string" resultMap="OrderItemResultMap">
-        SELECT id, order_id, book_id, quantity, price, subtotal, status, created_at, updated_at
+        SELECT id, order_id, book_id, quantity, subtotal, status, created_at, updated_at
         FROM order_item
         WHERE status = #{status}
         ORDER BY id DESC

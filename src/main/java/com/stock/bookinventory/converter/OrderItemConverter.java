@@ -20,7 +20,6 @@ public class OrderItemConverter {
 		dto.setOrderId(orderItem.getOrderId());
 		dto.setBookId(orderItem.getBookId());
 		dto.setQuantity(orderItem.getQuantity());
-		dto.setPrice(orderItem.getPrice());
 		dto.setSubtotal(orderItem.getSubtotal());
 		dto.setStatus(orderItem.getStatus());
 		dto.setCreatedAt(orderItem.getCreatedAt());
@@ -39,7 +38,6 @@ public class OrderItemConverter {
 		orderItem.setOrderId(dto.getOrderId());
 		orderItem.setBookId(dto.getBookId());
 		orderItem.setQuantity(dto.getQuantity());
-		orderItem.setPrice(dto.getPrice());
 		orderItem.setSubtotal(dto.getSubtotal());
 		orderItem.setStatus(dto.getStatus());
 		orderItem.setCreatedAt(dto.getCreatedAt());

@@ -2,8 +2,11 @@ package com.stock.bookinventory.controller;
 
 import java.util.List;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.stock.bookinventory.dto.request.CreateValidation;
+import com.stock.bookinventory.dto.request.DeleteValidation;
 import com.stock.bookinventory.dto.request.OrderRequestDTO;
 import com.stock.bookinventory.dto.request.OrderStatusRequestDTO;
 import com.stock.bookinventory.dto.response.ApiResponse;
@@ -21,13 +24,15 @@ public class OrderController {
 	}
 
 	@PostMapping("/createOrder")
-	public ApiResponse<OrderResponseDTO> createOrder(OrderRequestDTO orderRequestDTO) {
+	public ApiResponse<OrderResponseDTO> createOrder(
+			@Validated(CreateValidation.class) @RequestBody OrderRequestDTO orderRequestDTO) {
 		OrderResponseDTO createdOrder = orderService.createOrder(orderRequestDTO);
 		return ApiResponse.success("Order created successfully", createdOrder);
 	}
 
 	@DeleteMapping("/deleteOrder")
-	public ApiResponse<OrderResponseDTO> deleteOrder(@RequestBody OrderRequestDTO orderRequestDTO) {
+	public ApiResponse<OrderResponseDTO> deleteOrder(
+			@Validated(DeleteValidation.class) @RequestBody OrderRequestDTO orderRequestDTO) {
 		orderService.deleteOrder(orderRequestDTO);
 		return ApiResponse.success("Order deleted successfully");
 	}

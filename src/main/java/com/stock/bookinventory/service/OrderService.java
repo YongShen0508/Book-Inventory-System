@@ -24,6 +24,7 @@ import com.stock.bookinventory.dto.response.OrderResponseDTO;
 import com.stock.bookinventory.exception.GeneralException;
 import com.stock.bookinventory.model.Order;
 import com.stock.bookinventory.model.OrderItem;
+import com.stock.bookinventory.model.OrderItemStatus;
 import com.stock.bookinventory.model.OrderStatus;
 import com.stock.bookinventory.repository.OrderItemRepository;
 import com.stock.bookinventory.repository.OrderRepository;
@@ -76,8 +77,14 @@ public class OrderService {
 					bookService.updateStock(item.getBookId(), item.getQuantity());
 				});
 
-				// Build response
-				return buildOrderResponseDTO(order, customerResponseDTO, orderItems);
+				// Fetch the complete order with timestamps from database
+				Order savedOrder = orderRepository.selectById(order.getId());
+
+				// Fetch the complete order items with timestamps from database
+				List<OrderItem> savedOrderItems = orderItemRepository.findByOrderId(order.getId());
+
+				// Build response with complete data
+				return buildOrderResponseDTO(savedOrder, customerResponseDTO, savedOrderItems);
 			} catch (Exception e) {
 				status.setRollbackOnly();
 				logger.error("Error creating order: {}", e.getMessage(), e);
@@ -112,11 +119,13 @@ public class OrderService {
 	private List<OrderItem> createOrderItems(Long orderId, OrderRequestDTO orderRequestDTO) {
 		return orderRequestDTO.getItems().stream().sorted(Comparator.comparing(OrderItemRequestDTO::getBookId))
 				.map(itemDTO -> {
+					BookResponseDTO bookResponseDTO = bookService.findBookById(itemDTO.getBookId());
 					OrderItem orderItem = new OrderItem();
 					orderItem.setOrderId(orderId);
 					orderItem.setBookId(itemDTO.getBookId());
 					orderItem.setQuantity(itemDTO.getQuantity());
 					orderItem.setSubtotal(calculateSubtotal(itemDTO));
+					orderItem.setStatus(OrderItemStatus.PENDING); // Set default status
 					return orderItem;
 				}).toList();
 	}
@@ -287,7 +296,11 @@ public class OrderService {
 
 				// Validate status transition
 				OrderStatus currentStatus = order.getStatus();
-				currentStatus.validateTransition(newStatus);
+				try {
+					currentStatus.validateTransition(newStatus);
+				} catch (IllegalStateException e) {
+					throw new GeneralException(ErrorCode.INVALID_STATUS_TRANSITION, e.getMessage());
+				}
 
 				// Update order status
 				order.setStatus(newStatus);

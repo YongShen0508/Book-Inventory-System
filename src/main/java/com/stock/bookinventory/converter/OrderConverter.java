@@ -46,6 +46,7 @@ public class OrderConverter {
 		Order order = new Order();
 		order.setId(dto.getId());
 		order.setCustomerId(dto.getCustomerId());
+		order.setOrderDate(new Date()); // Set order date to current date
 		order.setOrderAt(new Date());
 		order.setExpiresAt(new Date(AppConstants.EXPIRED_DATE));
 		return order;

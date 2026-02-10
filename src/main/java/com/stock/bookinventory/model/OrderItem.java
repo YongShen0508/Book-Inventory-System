@@ -16,7 +16,6 @@ public class OrderItem {
 	private Long orderId;
 	private Long bookId;
 	private Integer quantity;
-	private BigDecimal price;
 	private BigDecimal subtotal;
 	private OrderItemStatus status;
 	private Date createdAt;

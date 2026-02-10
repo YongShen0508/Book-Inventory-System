@@ -29,6 +29,10 @@ public class OrderRepository {
 		return Optional.ofNullable(orderMapper.findById(id));
 	}
 
+	public Order selectById(Long id) {
+		return orderMapper.selectById(id);
+	}
+
 	public int update(Order order) {
 		return orderMapper.update(order);
 	}

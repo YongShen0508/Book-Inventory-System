@@ -19,14 +19,15 @@
 
     <!-- Insert Order -->
     <insert id="insert" parameterType="com.stock.bookinventory.model.Order" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO orders (customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at)
+        INSERT INTO `order` (customer_id, order_date, status, total_amount, order_at, expires_at, created_at,
+        updated_at)
         VALUES (#{customerId}, #{orderDate}, #{status}, #{totalAmount}, #{orderAt}, #{expiresAt}, NOW(), NOW())
     </insert>
 
     <!-- Find All Orders -->
     <select id="findAll" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         ORDER BY id DESC
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
@@ -34,28 +35,28 @@
     <!-- Find Order By ID -->
     <select id="findById" parameterType="long" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         WHERE id = #{id}
     </select>
 
     <!-- Select Order By ID -->
     <select id="selectById" parameterType="long" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         WHERE id = #{id}
     </select>
 
     <!-- Get Order For Update (with row lock) -->
     <select id="getOrderForUpdate" parameterType="long" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         WHERE id = #{id}
         FOR UPDATE
     </select>
 
     <!-- Update Order -->
     <update id="update" parameterType="com.stock.bookinventory.model.Order">
-        UPDATE orders
+        UPDATE `order`
         SET customer_id = #{customerId},
         order_date = #{orderDate},
         status = #{status},
@@ -68,7 +69,7 @@
 
     <!-- Update Order Status -->
     <update id="updateStatus">
-        UPDATE orders
+        UPDATE `order`
         SET status = #{status},
         updated_at = NOW()
         WHERE id = #{orderId}
@@ -76,7 +77,7 @@
 
     <!-- Update Order Total Amount -->
     <update id="updateTotalAmount">
-        UPDATE orders
+        UPDATE `order`
         SET total_amount = #{totalAmount},
         updated_at = NOW()
         WHERE id = #{orderId}
@@ -84,14 +85,14 @@
 
     <!-- Delete Order By ID -->
     <delete id="deleteById" parameterType="long">
-        DELETE FROM orders
+        DELETE FROM `order`
         WHERE id = #{id}
     </delete>
 
     <!-- Find Orders By Customer ID -->
     <select id="findByCustomerId" parameterType="long" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         WHERE customer_id = #{customerId}
         ORDER BY id DESC
     </select>
@@ -99,7 +100,7 @@
     <!-- Find Orders By Status -->
     <select id="findByStatus" parameterType="string" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         WHERE status = #{status}
         ORDER BY id DESC
     </select>
@@ -107,7 +108,7 @@
     <!-- Find Expired Orders with Pagination -->
     <select id="findExpiredOrder" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         WHERE expires_at &lt; NOW()
         AND status = 'PENDING'
         ORDER BY expires_at ASC
@@ -117,7 +118,7 @@
     <!-- Find Pending Orders -->
     <select id="findPendingOrders" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
-        FROM orders
+        FROM `order`
         WHERE status = 'PENDING'
         ORDER BY id DESC
     </select>
@@ -125,7 +126,7 @@
     <!-- Calculate Total Revenue By Date Range -->
     <select id="calculateRevenueByDateRange" resultType="java.math.BigDecimal">
         SELECT COALESCE(SUM(total_amount), 0)
-        FROM orders
+        FROM `order`
         WHERE status = 'COMPLETED'
         AND order_date BETWEEN #{startDate} AND #{endDate}
     </select>
