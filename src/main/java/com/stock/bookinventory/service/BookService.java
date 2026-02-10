@@ -60,7 +60,10 @@ public class BookService {
 		// Convert DTO to model and perform update
 		Book book = BookConverter.toModel(bookRequestDTO);
 
-		bookRepository.update(book);
+		int rowsAffected = bookRepository.update(book);
+		if (rowsAffected == 0) {
+			throw new GeneralException(ErrorCode.NO_BOOK_UPDATED, "Failed to update book with ID " + bookId);
+		}
 	}
 
 	public BookResponseDTO getBookById(Long id) {
@@ -89,7 +92,10 @@ public class BookService {
 		}
 
 		book.setStockQuantity(newStock);
-		bookRepository.update(book);
+		int rowsAffected = bookRepository.update(book);
+		if (rowsAffected == 0) {
+			throw new GeneralException(ErrorCode.NO_BOOK_UPDATED, "Failed to update stock for book with ID " + bookId);
+		}
 	}
 
 	@Transactional
@@ -102,7 +108,10 @@ public class BookService {
 
 		int newStock = book.getStockQuantity() + quantity;
 		book.setStockQuantity(newStock);
-		bookRepository.update(book);
+		int rowsAffected = bookRepository.update(book);
+		if (rowsAffected == 0) {
+			throw new GeneralException(ErrorCode.NO_BOOK_UPDATED, "Failed to release stock for book with ID " + bookId);
+		}
 	}
 
 	public List<BookResponseDTO> searchBooksByKeyword(String keyword, int pageSize, int offset) {

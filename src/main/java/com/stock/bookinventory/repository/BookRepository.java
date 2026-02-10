@@ -46,8 +46,8 @@ public class BookRepository {
 		return bookMapper.findByCriteria(criteria, pageSize, offset);
 	}
 
-	public void update(Book book) {
-		bookMapper.update(book);
+	public int update(Book book) {
+		return bookMapper.update(book);
 	}
 
 	public void deleteById(Long id) {

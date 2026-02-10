@@ -85,7 +85,11 @@ public class CustomerService {
 		}
 
 		Customer customer = CustomerConverter.toModel(customerRequestDTO);
-		customerRepository.update(customer);
+		int rowsAffected = customerRepository.update(customer);
+		if (rowsAffected == 0) {
+			throw new GeneralException(ErrorCode.NO_CUSTOMER_UPDATED,
+					"Failed to update customer with ID " + customerRequestDTO.getId());
+		}
 	}
 
 	@Transactional

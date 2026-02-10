@@ -16,5 +16,9 @@ public class ErrorCode {
 
 	public static final String DUPLICATE_EMAIL = "DUPLICATE_EMAIL";
 
+	public static final String NO_CUSTOMER_UPDATED = "NO_CUSTOMER_UPDATED";
+
+	public static final String NO_BOOK_UPDATED = "NO_BOOK_UPDATED";
+
 	public static final String INVALID_STATUS_TRANSITION = "INVALID_STATUS_TRANSITION";
 }
