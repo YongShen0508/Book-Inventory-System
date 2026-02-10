@@ -6,8 +6,8 @@ public class AppConstants {
 
 	public static final String OFFSET = "0";
 
-	public static final int EXPIRED_DATE = Math.toIntExact(System.currentTimeMillis() + 24 * 60 * 60 * 1000); // 24
-																												// hours
+	public static final long EXPIRED_DATE = System.currentTimeMillis() + 24 * 60 * 60 * 1000; // 24 hours
+
 	public static final int STOCK_LOW_THRESHOLD = 10;
 
 	public final int MAX_AUDIT_RETURN_VALUE_LENGTH = 2000;
