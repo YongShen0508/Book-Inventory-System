@@ -6,9 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.stock.bookinventory.constants.AppConstants;
-import com.stock.bookinventory.dto.request.BookRequestByCriteriaDTO;
-import com.stock.bookinventory.dto.request.BookRequestDTO;
-import com.stock.bookinventory.dto.request.DeleteValidation;
+import com.stock.bookinventory.dto.request.*;
 import com.stock.bookinventory.dto.response.ApiResponse;
 import com.stock.bookinventory.dto.response.BookResponseDTO;
 import com.stock.bookinventory.service.BookService;
@@ -26,7 +24,8 @@ public class BookController {
 	}
 
 	@PostMapping("/createBook")
-	public ApiResponse<BookResponseDTO> createBook(BookRequestDTO bookRequestDTO) {
+	public ApiResponse<BookResponseDTO> createBook(
+			@Validated(CreateValidation.class) @RequestBody BookRequestDTO bookRequestDTO) {
 		BookResponseDTO createdBook = bookService.createBook(bookRequestDTO);
 		return ApiResponse.success("Book created successfully", createdBook);
 	}
@@ -38,7 +37,7 @@ public class BookController {
 	}
 
 	@PutMapping
-	public ApiResponse<Void> updateBook(@RequestBody BookRequestDTO bookRequestDTO) {
+	public ApiResponse<Void> updateBook(@Validated(UpdateValidation.class) @RequestBody BookRequestDTO bookRequestDTO) {
 		bookService.updateBook(bookRequestDTO);
 		return ApiResponse.success("Book updated successfully");
 	}

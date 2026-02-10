@@ -34,7 +34,7 @@ public class BookService {
 	public BookResponseDTO createBook(BookRequestDTO bookRequestDTO) {
 		Book book = BookConverter.toModel(bookRequestDTO);
 		bookRepository.insert(book);
-		return BookConverter.toDTO(book);
+		return BookConverter.toDTO(bookRepository.selectById(book.getId()));
 	}
 
 	@Transactional
@@ -64,7 +64,8 @@ public class BookService {
 	}
 
 	public BookResponseDTO getBookById(Long id) {
-		return bookRepository.findById(id).map(BookConverter::toDTO).orElse(null);
+		return bookRepository.findById(id).map(BookConverter::toDTO).orElseThrow(
+				() -> new GeneralException(ErrorCode.RECORD_NOT_FOUND, "Book with ID " + id + " does not exist."));
 	}
 
 	public BookResponseDTO findBookById(Long id) {
