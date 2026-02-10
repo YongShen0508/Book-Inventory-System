@@ -78,7 +78,8 @@ public class OrderService {
 				});
 
 				// Fetch the complete order with timestamps from database
-				Order savedOrder = orderRepository.selectById(order.getId());
+				Order savedOrder = orderRepository.findById(order.getId()).orElseThrow(
+						() -> new GeneralException(ErrorCode.ORDER_NOT_FOUND, "Order not found after creation"));
 
 				// Fetch the complete order items with timestamps from database
 				List<OrderItem> savedOrderItems = orderItemRepository.findByOrderId(order.getId());
@@ -156,7 +157,14 @@ public class OrderService {
 
 						// Parse current status and validate transition
 						OrderStatus currentStatus = updateOrder.getStatus();
-						currentStatus.validateTransition(OrderStatus.EXPIRED);
+						try {
+							currentStatus.validateTransition(OrderStatus.EXPIRED);
+						} catch (IllegalStateException e) {
+							// Skip this order if it cannot transition to EXPIRED
+							// (e.g., already COMPLETED, CANCELLED, or EXPIRED)
+							logger.warn("Cannot expire order {}: {}", order.getId(), e.getMessage());
+							return;
+						}
 
 						// Update order status
 						updateOrder.setStatus(OrderStatus.EXPIRED);

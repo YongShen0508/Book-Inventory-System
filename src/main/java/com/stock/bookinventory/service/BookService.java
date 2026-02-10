@@ -69,7 +69,8 @@ public class BookService {
 	}
 
 	public BookResponseDTO findBookById(Long id) {
-		Book book = bookRepository.selectById(id);
+		Book book = bookRepository.findById(id).orElseThrow(
+				() -> new GeneralException(ErrorCode.RECORD_NOT_FOUND, "Book with ID " + id + " does not exist."));
 		return BookConverter.toDTO(book);
 	}
 

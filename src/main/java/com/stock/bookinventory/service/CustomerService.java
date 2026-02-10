@@ -32,7 +32,8 @@ public class CustomerService {
 
 	public CustomerResponseDTO getCustomerById(Long id) {
 		Optional<Customer> customer = customerRepository.findById(id);
-		return customer.map(CustomerConverter::toDTO).orElse(null);
+		return customer.map(CustomerConverter::toDTO).orElseThrow(
+				() -> new GeneralException(ErrorCode.RECORD_NOT_FOUND, "Customer with ID " + id + " not found"));
 	}
 
 	public CustomerResponseDTO findCustomerById(Long id) {
