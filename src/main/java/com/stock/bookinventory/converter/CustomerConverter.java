@@ -4,7 +4,7 @@ import com.stock.bookinventory.dto.request.CustomerRequestDTO;
 import com.stock.bookinventory.dto.response.CustomerResponseDTO;
 import com.stock.bookinventory.model.Customer;
 
-public class CustromerConverter {
+public class CustomerConverter {
 
 	public static CustomerResponseDTO toDTO(Customer customer) {
 		if (customer == null) {
