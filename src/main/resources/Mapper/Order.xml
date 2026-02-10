@@ -28,6 +28,7 @@
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
         FROM orders
         ORDER BY id DESC
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <!-- Find Order By ID -->
@@ -103,14 +104,14 @@
         ORDER BY id DESC
     </select>
 
-    <!-- Find Expired Orders -->
-    <select id="findExpiredOrders" resultMap="OrderResultMap">
+    <!-- Find Expired Orders with Pagination -->
+    <select id="findExpiredOrder" resultMap="OrderResultMap">
         SELECT id, customer_id, order_date, status, total_amount, order_at, expires_at, created_at, updated_at
         FROM orders
         WHERE expires_at &lt; NOW()
-        AND status != 'COMPLETED'
-        AND status != 'CANCELLED'
+        AND status = 'PENDING'
         ORDER BY expires_at ASC
+        LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
     <!-- Find Pending Orders -->

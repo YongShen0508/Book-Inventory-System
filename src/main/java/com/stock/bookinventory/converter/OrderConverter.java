@@ -31,6 +31,13 @@ public class OrderConverter {
 		return dto;
 	}
 
+	public static OrderResponseDTO toDTO(Order order,
+			List<com.stock.bookinventory.dto.response.OrderItemResponseDTO> orderItems) {
+		OrderResponseDTO dto = toDTO(order);
+		dto.setOrderItems(orderItems);
+		return dto;
+	}
+
 	public static Order toModel(OrderRequestDTO dto) {
 		if (dto == null) {
 			return new Order();

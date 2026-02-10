@@ -16,7 +16,7 @@ public interface OrderMapper {
 	int insert(Order order);
 
 	// Find operations
-	List<Order> findAll();
+	List<Order> findAll(@Param("pageSize") int pageSize, @Param("offset") int offset);
 
 	<Optional> Order findById(@Param("id") Long id);
 
@@ -28,7 +28,7 @@ public interface OrderMapper {
 
 	List<Order> findByStatus(@Param("status") String status);
 
-	List<Order> findExpiredOrders();
+	List<Order> findExpiredOrder(@Param("pageSize") int pageSize, @Param("offset") int offset);
 
 	List<Order> findPendingOrders();
 
