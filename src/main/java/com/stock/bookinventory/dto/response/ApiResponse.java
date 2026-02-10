@@ -10,7 +10,7 @@ import lombok.Data;
 public class ApiResponse<T> {
 	private boolean success;
 	private String message;
-	private T date;
+	private T data;
 	private Date timestamp;
 
 	public static <T> ApiResponse<T> success(String message, T data) {
@@ -18,7 +18,7 @@ public class ApiResponse<T> {
 	}
 
 	public static <T> ApiResponse<T> success(String message) {
-		return new ApiResponse<>(false, message, null, new Date());
+		return new ApiResponse<>(true, message, null, new Date());
 	}
 
 	public static <T> ApiResponse<T> error(String message) {
