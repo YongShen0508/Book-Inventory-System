@@ -13,4 +13,8 @@ public class ErrorCode {
 	public static final String NO_ORDER_UPDATED = "NO_ORDER_UPDATED";
 
 	public static final String ORDER_NOT_FOUND = "ORDER_NOT_FOUND";
+
+	public static final String DUPLICATE_EMAIL = "DUPLICATE_EMAIL";
+
+	public static final String INVALID_STATUS_TRANSITION = "INVALID_STATUS_TRANSITION";
 }
